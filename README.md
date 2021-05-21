@@ -1,7 +1,5 @@
 # ethereum-tx-sign
 
-[![Build Status](https://travis-ci.com/synlestidae/ethereum-tx-sign.svg?branch=master)](https://travis-ci.com/synlestidae/ethereum-tx-sign)
-
 Allows you to sign Ethereum transactions offline.
 
 ```rust

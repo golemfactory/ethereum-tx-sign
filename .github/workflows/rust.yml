@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+      - release/*
+
+jobs:
+  build:
+    name: Tests & Build
+    env:
+      # `-D warnings` means any warnings emitted will cause build to fail
+      RUSTFLAGS: "-D warnings -C opt-level=z -C target-cpu=x86-64 -C debuginfo=1"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Install last stable Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: rustfmt, clippy
+
+      - name: Check lockfile
+        uses: actions-rs/cargo@v1
+        with:
+          command: tree
+          args: --locked
+
+      - name: Check formatting
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+      - name: Unit tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --workspace --locked
